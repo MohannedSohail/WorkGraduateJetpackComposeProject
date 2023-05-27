@@ -46,7 +46,7 @@ fun ServiceScreen() {
                 content = {
 
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().padding(top = 10.dp),
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -106,7 +106,7 @@ fun ServiceScreen() {
                                     Image(
                                         modifier = Modifier
                                             .fillMaxWidth(),
-                                        painter = painterResource(id = R.drawable.profile),
+                                        painter = painterResource(id = R.drawable.selectimage),
                                         contentDescription = "MyFirstImage",
                                     )
                                     Text(
@@ -213,17 +213,17 @@ fun MyItem(myData: MyData) {
 
 
 val MyList = listOf(
-    MyData(R.drawable.profile, "Carpenter"),
-    MyData(R.drawable.profile, "Carpenter"),
-    MyData(R.drawable.profile, "Carpenter"),
-    MyData(R.drawable.profile, "Carpenter"),
-    MyData(R.drawable.profile, "Carpenter"),
-    MyData(R.drawable.profile, "Carpenter"),
-    MyData(R.drawable.profile, "Carpenter"),
-    MyData(R.drawable.profile, "Carpenter"),
-    MyData(R.drawable.profile, "Carpenter"),
-    MyData(R.drawable.profile, "Carpenter"),
-    MyData(R.drawable.profile, "Carpenter"),
+    MyData(R.drawable.selectimage, "Carpenter"),
+    MyData(R.drawable.selectimage, "Carpenter"),
+    MyData(R.drawable.selectimage, "Carpenter"),
+    MyData(R.drawable.selectimage, "Carpenter"),
+    MyData(R.drawable.selectimage, "Carpenter"),
+    MyData(R.drawable.selectimage, "Carpenter"),
+    MyData(R.drawable.selectimage, "Carpenter"),
+    MyData(R.drawable.selectimage, "Carpenter"),
+    MyData(R.drawable.selectimage, "Carpenter"),
+    MyData(R.drawable.selectimage, "Carpenter"),
+    MyData(R.drawable.selectimage, "Carpenter"),
 
 
     )
