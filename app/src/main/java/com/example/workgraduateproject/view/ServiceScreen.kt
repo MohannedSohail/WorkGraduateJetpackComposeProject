@@ -1,6 +1,9 @@
 package com.example.workgraduateproject.view
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -14,17 +17,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.example.workgraduateproject.R
+import com.example.workgraduateproject.model.WorkData
+import com.example.workgraduateproject.navigation.Screens
+import com.example.workgraduateproject.viewModel.AllWorkViewModel
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ServiceScreen() {
+fun ServiceScreen(navController: NavController,viewModel: AllWorkViewModel) {
+
+    viewModel.getItemsList()
 
     Scaffold(
 
@@ -46,7 +60,9 @@ fun ServiceScreen() {
                 content = {
 
                     Column(
-                        modifier = Modifier.fillMaxSize().padding(top = 10.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 10.dp),
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -87,15 +103,14 @@ fun ServiceScreen() {
                         ) {
 
 
-
                             Card(
                                 modifier = Modifier
-                                    .width(260.dp)
-                                    .height(100.dp)
-                                    .clickable { },
-                                border = BorderStroke(width = 0.5.dp, color = Color.Red),
+                                    .width(300.dp)
+                                    .height(90.dp),
+                                border = BorderStroke(width = 0.5.dp, color = Color(0xffDE1487)),
                                 shape = RoundedCornerShape(15.dp),
                                 elevation = 10.dp,
+                                onClick = {}
 
                                 ) {
                                 Column(
@@ -132,7 +147,7 @@ fun ServiceScreen() {
 
                 )
 
-        }
+        },
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -145,7 +160,6 @@ fun ServiceScreen() {
                 modifier = Modifier.padding(top = 30.dp, bottom = 10.dp),
                 text = "Select Service",
                 color = Color(0xFF0E4DFB),
-                fontWeight = FontWeight.Bold,
             )
             Row(
                 modifier = Modifier
@@ -157,7 +171,12 @@ fun ServiceScreen() {
 
 
                 LazyVerticalGrid(columns = GridCells.Fixed(3), content = {
-                    items(MyList) { it -> MyItem(myData = it) }
+                    items(viewModel.workListResponse) { it ->
+                        MyItem(
+                            myData = it,
+                            LocalContext.current,navController
+                        )
+                    }
                 })
 
 
@@ -171,18 +190,29 @@ fun ServiceScreen() {
 
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MyItem(myData: MyData) {
+fun MyItem(myData: WorkData, context: Context,navController: NavController) {
 
     Card(
         modifier = Modifier
             .background(Color.White)
             .width(260.dp)
             .padding(10.dp)
-            .height(100.dp)
-            .clickable { }, border = BorderStroke(width = 0.5.dp, color = Color.Red),
+            .height(100.dp), border = BorderStroke(width = 0.5.dp, color = Color(0xffDE1487)),
         shape = RoundedCornerShape(15.dp),
-        elevation = 10.dp
+        elevation = 10.dp,
+        onClick = {
+            navController.navigate(Screens.AddOrderScreen.AddOrder.route)
+            Toast
+                .makeText(
+                    context,
+                    " my ID ${myData.id}",
+                    Toast.LENGTH_LONG
+                )
+                .show()
+
+        }
 
     ) {
         Column(
@@ -190,17 +220,49 @@ fun MyItem(myData: MyData) {
 
             verticalArrangement = Arrangement.Center
         ) {
+
+
             Image(
+
                 modifier = Modifier
                     .fillMaxWidth(),
-                painter = painterResource(id = myData.img),
+                painter = painterResource(id = R.drawable.carpenter),
                 contentDescription = "MyFirstImage",
             )
+
+
+//            if (myData.icon != null && myData.icon != "") {
+//                Icon(rememberAsyncImagePainter(myData.icon), contentDescription = "")
+//                Toast.makeText(
+//                    LocalContext.current,
+//                    " myData.icon != null ${myData.icon}",
+//                    Toast.LENGTH_LONG
+//                )
+//                    .show()
+//
+//
+//            } else {
+//                Toast.makeText(
+//                    LocalContext.current,
+//                    " myData.icon == null ${myData.icon}",
+//                    Toast.LENGTH_LONG
+//                )
+//                    .show()
+//
+//
+//                Image(
+//
+//                    modifier = Modifier
+//                        .fillMaxWidth(),
+//                    painter = painterResource(id = R.drawable.carpenter),
+//                    contentDescription = "MyFirstImage",
+//                )
+//            }
             Text(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 15.dp),
-                text = myData.name,
+                text = myData.name.toString(),
                 color = Color(0xFF0E4DFB),
                 fontSize = 10.sp,
                 textAlign = TextAlign.Center
@@ -210,22 +272,3 @@ fun MyItem(myData: MyData) {
 
     }
 }
-
-
-val MyList = listOf(
-    MyData(R.drawable.selectimage, "Carpenter"),
-    MyData(R.drawable.selectimage, "Carpenter"),
-    MyData(R.drawable.selectimage, "Carpenter"),
-    MyData(R.drawable.selectimage, "Carpenter"),
-    MyData(R.drawable.selectimage, "Carpenter"),
-    MyData(R.drawable.selectimage, "Carpenter"),
-    MyData(R.drawable.selectimage, "Carpenter"),
-    MyData(R.drawable.selectimage, "Carpenter"),
-    MyData(R.drawable.selectimage, "Carpenter"),
-    MyData(R.drawable.selectimage, "Carpenter"),
-    MyData(R.drawable.selectimage, "Carpenter"),
-
-
-    )
-
-data class MyData(val img: Int, val name: String)

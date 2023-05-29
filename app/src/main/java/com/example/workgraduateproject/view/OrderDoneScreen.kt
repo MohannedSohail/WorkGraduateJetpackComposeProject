@@ -23,12 +23,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.workgraduateproject.R
+import com.example.workgraduateproject.navigation.Screens
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun OrderDoneScreen() {
+fun OrderDoneScreen(navController: NavController) {
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(100.dp))
         Image(
@@ -41,20 +43,26 @@ fun OrderDoneScreen() {
 
 
         Text(buildAnnotatedString {
-            withStyle(style = SpanStyle(color = Color.Black, fontSize = 24.sp,)) {
+            withStyle(style = SpanStyle(color = Color.Black, fontSize = 24.sp)) {
                 append("ORDER")
             }
-            withStyle(style = SpanStyle(color = Color.Blue,fontSize = 24.sp)) {
+            withStyle(style = SpanStyle(color = Color.Blue, fontSize = 24.sp)) {
                 append(" DONE!")
-            }})
+            }
+        })
 
         Spacer(modifier = Modifier.height(15.dp))
 
-        Text(text = "The ORDER has been sent. A technician will\n contact you", style = TextStyle(fontSize = 14.sp, textAlign = TextAlign.Center))
+        Text(
+            text = "The ORDER has been sent. A technician will\n contact you",
+            style = TextStyle(fontSize = 14.sp, textAlign = TextAlign.Center)
+        )
         Spacer(modifier = Modifier.height(10.dp))
 
         Button(
             onClick = {
+
+                      navController.navigate(Screens.BOTTOM_NAV_GRAPH.route)
             },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -77,7 +85,11 @@ fun OrderDoneScreen() {
             elevation = ButtonDefaults.elevation(0.dp, pressedElevation = 0.dp)
 
         ) {
-            Text(text = "GO TO HOME", color = Color.White, style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),)
+            Text(
+                text = "GO TO HOME",
+                color = Color.White,
+                style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
+            )
         }
 
 

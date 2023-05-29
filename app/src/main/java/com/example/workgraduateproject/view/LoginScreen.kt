@@ -33,7 +33,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
 import com.example.workgraduateproject.R
+import com.example.workgraduateproject.navigation.Screens
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 import okhttp3.internal.wait
@@ -41,7 +43,7 @@ import okhttp3.internal.wait
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController) {
 
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
@@ -170,18 +172,21 @@ fun LoginScreen() {
                     if (page == 0) {
 
 
-                        CustomerLoginScreen()
+                        CustomerLoginScreen(navController)
 
 
                     } else {
-                        ServiceProviderLoginScreen()
+                        ServiceProviderLoginScreen(navController)
 
                     }
 
                 }
 
 
-                TextButton(onClick = {}) {
+                TextButton(onClick = {
+
+                    navController.navigate(Screens.BOTTOM_NAV_GRAPH.route)
+                }) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
@@ -217,7 +222,7 @@ fun LoginScreen() {
 
 @Composable
 private fun ServiceProviderLoginScreen(
-
+    navController: NavController
 ) {
 
     var serviceproviderEmail by remember { mutableStateOf(value = "") }
@@ -321,7 +326,10 @@ private fun ServiceProviderLoginScreen(
                         textAlign = TextAlign.Start,
                     )
                 )
-                TextButton(onClick = {}) {
+                TextButton(onClick = {
+
+                    navController.navigate(Screens.AuthScreens.SignUp.route)
+                }) {
                     Text(
                         text = "SIGN UP",
                         style = TextStyle(
@@ -339,6 +347,7 @@ private fun ServiceProviderLoginScreen(
 
             Button(
                 onClick = {
+                    navController.navigate(Screens.BOTTOM_NAV_GRAPH.route)
                 },
                 modifier = Modifier
                     .height(50.dp)
@@ -385,6 +394,8 @@ private fun ServiceProviderLoginScreen(
 
 @Composable
 private fun CustomerLoginScreen(
+
+    navController: NavController
 
 ) {
     var customerEmail by remember { mutableStateOf(value = "") }
@@ -522,7 +533,10 @@ private fun CustomerLoginScreen(
                         textAlign = TextAlign.Start,
                     )
                 )
-                TextButton(onClick = {}) {
+                TextButton(onClick = {
+
+                    navController.navigate(Screens.AuthScreens.SignUp.route)
+                }) {
                     Text(
                         text = "SIGN UP",
                         style = TextStyle(
@@ -540,6 +554,8 @@ private fun CustomerLoginScreen(
 
             Button(
                 onClick = {
+
+                    navController.navigate(Screens.BOTTOM_NAV_GRAPH.route)
                 },
                 modifier = Modifier
                     .height(50.dp)

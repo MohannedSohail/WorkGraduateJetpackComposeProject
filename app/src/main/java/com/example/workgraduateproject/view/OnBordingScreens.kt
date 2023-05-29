@@ -19,8 +19,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.workgraduateproject.R
 import com.example.workgraduateproject.model.OnBordingContentData
+import com.example.workgraduateproject.navigation.Screens
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -29,11 +31,13 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun OnBordingScreens() {
+fun OnBordingScreens(navController: NavController) {
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.White)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
 
         val items = OnBordingItems()
         val pagerState = rememberPagerState()
@@ -42,11 +46,12 @@ fun OnBordingScreens() {
         HorizontalPager(
 
             state = pagerState,
-            count = items.size, modifier = Modifier
+            count = items.size,
+            modifier = Modifier
                 .weight(1f),
 
 
-        ) { currentPage ->
+            ) { currentPage ->
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,8 +85,13 @@ fun OnBordingScreens() {
         Button(
             onClick = {
                 coroutineScope.launch {
-                    if (pagerState.currentPage != 2)
+                    if (pagerState.currentPage != 2) {
                         pagerState.animateScrollToPage(page = pagerState.currentPage + 1)
+
+                    } else if (pagerState.currentPage == 2) {
+
+                        navController.navigate(Screens.AuthScreens.Login.route)
+                    }
 
                 }
             },
@@ -106,7 +116,11 @@ fun OnBordingScreens() {
             elevation = ButtonDefaults.elevation(0.dp, pressedElevation = 0.dp)
 
         ) {
-            Text(text = "NEXT", color = Color.White, style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),)
+            Text(
+                text = "NEXT",
+                color = Color.White,
+                style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
+            )
         }
     }
 

@@ -29,12 +29,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.workgraduateproject.R
+import com.example.workgraduateproject.navigation.Screens
 import com.togitech.ccp.component.TogiCountryCodePicker
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun LocationScreen(){
+fun LocationScreen(navController: NavController){
 
     Scaffold(
 
@@ -125,6 +127,7 @@ fun LocationScreen(){
 
             Button(
                 onClick = {
+                          navController.navigate(Screens.AddOrderScreen.OrderDone.route)
                 },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)

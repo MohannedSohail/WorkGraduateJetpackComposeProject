@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -24,19 +25,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.workgraduateproject.R
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ProfileScreen() {
+
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 brush = Brush.horizontalGradient(
 
-                    colors = listOf(Color(0xff346EDF), Color(0xff6FC8FB))
+                    colors = listOf(Color(0xff6FC8FB),Color(0xff0E4DFB))
                 )
             )
     ) {
@@ -64,7 +71,7 @@ fun ProfileScreen() {
         Box(
             modifier = Modifier
                 .weight(4f)
-                .background(Color.Red), contentAlignment = Alignment.TopCenter
+                .background(Color(0xffF6F7FB)), contentAlignment = Alignment.TopCenter
         ) {
 
             Column(
