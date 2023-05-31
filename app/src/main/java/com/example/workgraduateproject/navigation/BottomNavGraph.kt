@@ -9,9 +9,10 @@ import com.example.workgraduateproject.view.OrdersScreen
 import com.example.workgraduateproject.view.ProfileScreen
 import com.example.workgraduateproject.view.ServiceScreen
 import com.example.workgraduateproject.viewModel.AllWorkViewModel
+import com.example.workgraduateproject.viewModel.OrdersViewModel
 
 
-fun NavGraphBuilder.bottomNavGraph(navController: NavController, myViewModel: AllWorkViewModel) {
+fun NavGraphBuilder.bottomNavGraph(navController: NavController, myViewModel: AllWorkViewModel,viewModel: OrdersViewModel) {
     navigation(
         startDestination = Screens.BottomNavScreens.Service.route,
         route = Screens.BOTTOM_NAV_GRAPH.route
@@ -20,7 +21,7 @@ fun NavGraphBuilder.bottomNavGraph(navController: NavController, myViewModel: Al
             ServiceScreen(navController, myViewModel)
         }
         composable(Screens.BottomNavScreens.Orders.route) {
-            OrdersScreen(myViewModel)
+            OrdersScreen(myViewModel,viewModel)
         }
         composable(Screens.BottomNavScreens.Account.route) {
             ProfileScreen()

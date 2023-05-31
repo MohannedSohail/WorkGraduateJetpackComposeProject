@@ -1,25 +1,26 @@
 package com.example.workgraduateproject.view
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -33,12 +34,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.workgraduateproject.R
 import com.example.workgraduateproject.navigation.Screens
+import com.example.workgraduateproject.viewModel.LoginViewModel
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
@@ -48,6 +50,12 @@ fun LoginScreen(navController: NavController) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
     val pages = listOf("Customer", "Service provider")
+    val userEmail by rememberSaveable { mutableStateOf("mushtaha98@gmail.com") }
+    val password by rememberSaveable { mutableStateOf("123123") }
+
+
+    val loginViewModel = viewModel<LoginViewModel>()
+
 
 
 
@@ -172,7 +180,13 @@ fun LoginScreen(navController: NavController) {
                     if (page == 0) {
 
 
-                        CustomerLoginScreen(navController)
+                        CustomerLoginScreen(
+                            navController,
+                            loginViewModel,
+                            userEmail,
+                            password,
+                            LocalContext.current
+                        )
 
 
                     } else {
@@ -347,7 +361,9 @@ private fun ServiceProviderLoginScreen(
 
             Button(
                 onClick = {
-                    navController.navigate(Screens.BOTTOM_NAV_GRAPH.route)
+//                    navController.navigate(Screens.BOTTOM_NAV_GRAPH.route)
+
+
                 },
                 modifier = Modifier
                     .height(50.dp)
@@ -395,7 +411,11 @@ private fun ServiceProviderLoginScreen(
 @Composable
 private fun CustomerLoginScreen(
 
-    navController: NavController
+    navController: NavController,
+    loginViewModel: LoginViewModel,
+    userEmail: String,
+    password: String,
+    context: Context
 
 ) {
     var customerEmail by remember { mutableStateOf(value = "") }
@@ -556,6 +576,19 @@ private fun CustomerLoginScreen(
                 onClick = {
 
                     navController.navigate(Screens.BOTTOM_NAV_GRAPH.route)
+
+                    loginViewModel.loginPost("mushtaha98@gmail.com", "123123")
+//                    loginViewModel.loginPost(userEmail, password)
+
+                    Toast
+                        .makeText(
+                            context,
+                            " my token ${loginViewModel.loginResponse}",
+                            Toast.LENGTH_LONG
+                        )
+                        .show()
+
+
                 },
                 modifier = Modifier
                     .height(50.dp)

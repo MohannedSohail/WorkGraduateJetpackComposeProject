@@ -29,7 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import com.example.example.Data
 import com.example.workgraduateproject.viewModel.AllWorkViewModel
+import com.example.workgraduateproject.viewModel.OrdersViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
@@ -40,12 +42,15 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun OrdersScreen(allWorkViewModel: AllWorkViewModel) {
+fun OrdersScreen(allWorkViewModel: AllWorkViewModel,viewModel: OrdersViewModel) {
 
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
     val myTabs = listOf("Pending", "Underway", "Completed")
 
+    viewModel.getCompleteOrderList()
+    viewModel.getUnCompleteOrderList()
+    viewModel.getPendingOrderList()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -159,7 +164,7 @@ fun OrdersScreen(allWorkViewModel: AllWorkViewModel) {
                                         .padding(top = 3.dp, bottom = 83.dp),
 
                                     ) {
-                                    items(MyOrderList) {
+                                    items(viewModel.pendingOrderListResponse) {
                                         MyOrederItem(it)
                                     }
                                 }
@@ -182,7 +187,7 @@ fun OrdersScreen(allWorkViewModel: AllWorkViewModel) {
                                         .padding(top = 3.dp, bottom = 83.dp),
 
                                     ) {
-                                    items(MyOrderList) {
+                                    items(viewModel.unCompleteOrderListResponse) {
                                         MyOrederItem(it)
                                     }
                                 }
@@ -205,7 +210,7 @@ fun OrdersScreen(allWorkViewModel: AllWorkViewModel) {
                                         .padding(top = 3.dp, bottom = 83.dp),
 
                                     ) {
-                                    items(MyOrderList) {
+                                    items(viewModel.completeOrderListResponse) {
                                         MyOrederItem(it)
                                     }
                                 }
@@ -229,7 +234,7 @@ fun OrdersScreen(allWorkViewModel: AllWorkViewModel) {
 
 
 @Composable
-fun MyOrederItem(myData: MyOrderData) {
+fun MyOrederItem(myData: Data) {
 
     Card(
         modifier = Modifier
@@ -266,7 +271,7 @@ fun MyOrederItem(myData: MyOrderData) {
                 Text(
                     modifier = Modifier
                         .padding(top = 5.dp),
-                    text = myData.date,
+                    text = myData.createdAt.toString(),
                     color = Color(0xff7F8FA6),
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center
@@ -294,7 +299,7 @@ fun MyOrederItem(myData: MyOrderData) {
                 Text(
                     modifier = Modifier
                         .padding(top = 15.dp),
-                    text = myData.serviceType,
+                    text = myData.work?.name.toString(),
                     color = Color(0xff0E4DFB),
 
 //                    color = colorResource(R.color.textColor),
@@ -308,20 +313,3 @@ fun MyOrederItem(myData: MyOrderData) {
 
     }
 }
-
-
-val MyOrderList = listOf(
-    MyOrderData("28 Nov 2019", "Carpenter"),
-    MyOrderData("28 Nov 2019", "Computer"),
-    MyOrderData("28 Nov 2019", "Carpenter"),
-    MyOrderData("28 Nov 2019", "Computer"),
-    MyOrderData("28 Nov 2019", "Carpenter"),
-    MyOrderData("28 Nov 2019", "Computer"),
-    MyOrderData("28 Nov 2019", "Carpenter"),
-    MyOrderData("28 Nov 2019", "Computer"),
-    MyOrderData("28 Nov 2019", "Carpenter"),
-    MyOrderData("28 Nov 2019", "Computer"),
-
-    )
-
-data class MyOrderData(val date: String, val serviceType: String)

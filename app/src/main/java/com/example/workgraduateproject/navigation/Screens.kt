@@ -20,10 +20,6 @@ sealed class Screens(var route: String) {
         object More : BottomNavScreens("More", "More", R.drawable.ic_more_horiz_24px)
 
 
-//        object Done : Screens("Done", "Done", R.drawable.ic_more_horiz_24px)
-//        object AddOrder : Screens("AddOrder", "AddOrder", R.drawable.ic_more_horiz_24px)
-//
-
 
     }
 

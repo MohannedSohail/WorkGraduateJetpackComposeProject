@@ -2,6 +2,7 @@ package com.example.workgraduateproject.view
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
@@ -11,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
@@ -20,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -41,7 +44,7 @@ import com.example.workgraduateproject.navigation.Screens
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun AddOrder(navController: NavController) {
+fun AddOrder(navController: NavController, id: Int) {
 
     var selectedMultiImages by remember {
         mutableStateOf<List<Uri>>(emptyList())
@@ -51,6 +54,16 @@ fun AddOrder(navController: NavController) {
         rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
             selectedMultiImages = it
         }
+
+
+    Toast
+        .makeText(
+            LocalContext.current,
+            " Work ID ${id}",
+            Toast.LENGTH_LONG
+        )
+        .show()
+
     Scaffold(
 
         topBar = {
@@ -105,7 +118,8 @@ fun AddOrder(navController: NavController) {
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth().weight(1f)
+                    .fillMaxWidth()
+                    .weight(1f)
 
             ) {
 
@@ -163,28 +177,15 @@ fun AddOrder(navController: NavController) {
                                             ) {
                                                 val state = painter.state
                                                 if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
-                                                    CircularProgressIndicator()
+                                                    CircularProgressIndicator(
+                                                        color = Color(0xff346EDF)
+
+                                                    )
                                                 } else {
                                                     SubcomposeAsyncImageContent()
                                                 }
                                             }
-
-//                                    AsyncImage(
-//
-////                          model=uri,
-//                                        model = ImageRequest.Builder(LocalContext.current).data(uri)
-//                                            .crossfade(true)
-//                                            .build(),
-//                                        placeholder = painterResource(R.drawable.iconimage),
-//                                        contentDescription = "",
-//                                        modifier = Modifier
-//                                            .size(120.dp)
-//                                            .fillMaxWidth()
-//                                            .padding(5.dp).clip(RoundedCornerShape(10.dp)),
-////                                            .clip(CircleShape),
-//                                        contentScale = ContentScale.Crop
-//                                    )
-                                        }
+                                                                                    }
                                     })
 
                             } else {
@@ -226,12 +227,15 @@ fun AddOrder(navController: NavController) {
 
                     }
 
-                    Icon(
-                        modifier = Modifier.align(Alignment.TopStart).clickable { selectedMultiImages = emptyList() },
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "",
-                        tint = Color.Red,
-                    )
+                    if (selectedMultiImages.isNotEmpty())
+                        Icon(
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .clickable { selectedMultiImages = emptyList() },
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "",
+                            tint = Color.Red,
+                        )
 
                 }
 
@@ -266,7 +270,7 @@ fun AddOrder(navController: NavController) {
             Button(
                 onClick = {
 
-                          navController.navigate(Screens.AddOrderScreen.AddLocation.route)
+                    navController.navigate(Screens.AddOrderScreen.AddLocation.route)
                 },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)

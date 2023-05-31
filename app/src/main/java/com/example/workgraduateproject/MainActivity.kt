@@ -22,10 +22,12 @@ import com.example.workgraduateproject.navigation.Screens
 import com.example.workgraduateproject.ui.theme.WorkGraduateProjectTheme
 import com.example.workgraduateproject.view.*
 import com.example.workgraduateproject.viewModel.AllWorkViewModel
+import com.example.workgraduateproject.viewModel.OrdersViewModel
 
 class MainActivity : ComponentActivity() {
 
     private val allWorkViewModel by viewModels<AllWorkViewModel>()
+    private val OrderViewModel by viewModels<OrdersViewModel>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +39,7 @@ class MainActivity : ComponentActivity() {
 //                ChoiceCardScreen()
 //                NavigationBuild(controller,allWorkViewModel)
 
-                BottomNav(allWorkViewModel)
+                BottomNav(allWorkViewModel, OrderViewModel)
             }
         }
     }
@@ -58,7 +60,7 @@ fun DefaultPreview() {
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun BottomNav(myViewmodel: AllWorkViewModel) {
+fun BottomNav(myViewmodel: AllWorkViewModel,ordersViewModel: OrdersViewModel) {
 
     val controller = rememberNavController()
     val navBackStackEntry by controller.currentBackStackEntryAsState()
@@ -116,7 +118,7 @@ fun BottomNav(myViewmodel: AllWorkViewModel) {
         )
     {
 
-        NavigationBuild(controller, myViewmodel)
+        NavigationBuild(controller, myViewmodel,ordersViewModel)
 //        NavigationBuild(controller)
 
     }

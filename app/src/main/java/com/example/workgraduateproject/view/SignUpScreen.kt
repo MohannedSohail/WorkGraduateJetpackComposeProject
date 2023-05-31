@@ -1,6 +1,8 @@
 package com.example.workgraduateproject.view
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -25,6 +27,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -38,8 +41,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.workgraduateproject.R
+import com.example.workgraduateproject.viewModel.SignUpViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -57,6 +62,12 @@ fun SignUpScreen(navController: NavController) {
     val pages = listOf("Customer", "Service provider")
 
 
+    val signUpViewModel = viewModel<SignUpViewModel>()
+
+    val customerEmail by remember { mutableStateOf(value = "") }
+    val customerFullName by remember { mutableStateOf(value = "") }
+    val customerPassword by remember { mutableStateOf(value = "") }
+    val customerPhone by remember { mutableStateOf(value = "") }
 
     Column(
         modifier = Modifier
@@ -113,14 +124,6 @@ fun SignUpScreen(navController: NavController) {
                                 ),
                                 color = Color(0xff0E4DFB),
                                 height = 3.dp,
-
-
-//                                modifier = Modifier
-//                                    .pagerTabIndicatorOffset(pagerState, tabPositions)
-//                                    .width(10.dp)
-//                                    .padding(start = 80.dp, end = 80.dp)
-//                                    .height(2.dp),
-//                                color = MaterialTheme.colors.secondary,
                             )
                         },
                         backgroundColor = Color.Transparent,
@@ -167,11 +170,19 @@ fun SignUpScreen(navController: NavController) {
                     if (page == 0) {
 
 
-                        CustomerLoginScreen()
+                        CustomerSignUpScreen(
+                            navController,
+                            signUpViewModel,
+                            customerFullName,
+                            customerEmail,
+                            customerPassword,
+                            customerPhone,
+                            LocalContext.current
+                        )
 
 
                     } else {
-                        ServiceProviderLoginScreen()
+                        ServiceProviderSignUpScreen()
 
                     }
 
@@ -187,7 +198,15 @@ fun SignUpScreen(navController: NavController) {
 
 
 @Composable
-private fun CustomerLoginScreen(
+private fun CustomerSignUpScreen(
+
+    navController: NavController,
+    signUpViewModel: SignUpViewModel,
+    name: String,
+    email: String,
+    password: String,
+    phone: String,
+    context: Context
 
 ) {
     var customerEmail by remember { mutableStateOf(value = "") }
@@ -384,6 +403,16 @@ private fun CustomerLoginScreen(
 
             Button(
                 onClick = {
+
+                          signUpViewModel.signUpPost("TheKing","mushtaha19118@gmail.com","123123","0594042996")
+                    Toast
+                        .makeText(
+                            context,
+                            " My SignUp token ==> ${signUpViewModel.signUpResponse}",
+                            Toast.LENGTH_LONG
+                        )
+                        .show()
+
                 },
                 modifier = Modifier
                     .height(50.dp)
@@ -431,7 +460,7 @@ private fun CustomerLoginScreen(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun ServiceProviderLoginScreen(
+private fun ServiceProviderSignUpScreen(
 
 ) {
 

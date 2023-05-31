@@ -36,7 +36,7 @@ import com.example.workgraduateproject.viewModel.AllWorkViewModel
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ServiceScreen(navController: NavController,viewModel: AllWorkViewModel) {
+fun ServiceScreen(navController: NavController, viewModel: AllWorkViewModel) {
 
     viewModel.getItemsList()
 
@@ -112,7 +112,7 @@ fun ServiceScreen(navController: NavController,viewModel: AllWorkViewModel) {
                                 elevation = 10.dp,
                                 onClick = {}
 
-                                ) {
+                            ) {
                                 Column(
 
 
@@ -174,7 +174,7 @@ fun ServiceScreen(navController: NavController,viewModel: AllWorkViewModel) {
                     items(viewModel.workListResponse) { it ->
                         MyItem(
                             myData = it,
-                            LocalContext.current,navController
+                            LocalContext.current, navController
                         )
                     }
                 })
@@ -192,7 +192,7 @@ fun ServiceScreen(navController: NavController,viewModel: AllWorkViewModel) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MyItem(myData: WorkData, context: Context,navController: NavController) {
+fun MyItem(myData: WorkData, context: Context, navController: NavController) {
 
     Card(
         modifier = Modifier
@@ -203,7 +203,7 @@ fun MyItem(myData: WorkData, context: Context,navController: NavController) {
         shape = RoundedCornerShape(15.dp),
         elevation = 10.dp,
         onClick = {
-            navController.navigate(Screens.AddOrderScreen.AddOrder.route)
+            navController.navigate(Screens.AddOrderScreen.AddOrder.route + "/${myData.id}" )
             Toast
                 .makeText(
                     context,
@@ -221,43 +221,16 @@ fun MyItem(myData: WorkData, context: Context,navController: NavController) {
             verticalArrangement = Arrangement.Center
         ) {
 
+//
+//            Image(
+//
+//                modifier = Modifier
+//                    .fillMaxWidth(),
+//                painter = painterResource(id = R.drawable.carpenter),
+//                contentDescription = "MyFirstImage",
+//            )
+            Icon(rememberAsyncImagePainter(myData.icon), contentDescription = "")
 
-            Image(
-
-                modifier = Modifier
-                    .fillMaxWidth(),
-                painter = painterResource(id = R.drawable.carpenter),
-                contentDescription = "MyFirstImage",
-            )
-
-
-//            if (myData.icon != null && myData.icon != "") {
-//                Icon(rememberAsyncImagePainter(myData.icon), contentDescription = "")
-//                Toast.makeText(
-//                    LocalContext.current,
-//                    " myData.icon != null ${myData.icon}",
-//                    Toast.LENGTH_LONG
-//                )
-//                    .show()
-//
-//
-//            } else {
-//                Toast.makeText(
-//                    LocalContext.current,
-//                    " myData.icon == null ${myData.icon}",
-//                    Toast.LENGTH_LONG
-//                )
-//                    .show()
-//
-//
-//                Image(
-//
-//                    modifier = Modifier
-//                        .fillMaxWidth(),
-//                    painter = painterResource(id = R.drawable.carpenter),
-//                    contentDescription = "MyFirstImage",
-//                )
-//            }
             Text(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
