@@ -74,7 +74,7 @@ fun ServiceScreen(navController: NavController, viewModel: AllWorkViewModel) {
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 Image(
-                                    painter = painterResource(id = R.drawable.logo1),
+                                    painter = painterResource(id = R.drawable.servicehomelogo),
                                     modifier = Modifier
                                         .padding(5.dp)
                                         .height(40.dp),

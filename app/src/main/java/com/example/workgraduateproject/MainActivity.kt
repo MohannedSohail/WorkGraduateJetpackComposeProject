@@ -1,6 +1,7 @@
 package com.example.workgraduateproject
 
 import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,12 +35,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            val controller = rememberNavController()
+//            requestPermissions(
+//                arrayOf(
+//                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
+//                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                ), 1
+//            )
             WorkGraduateProjectTheme {
-//                ChoiceCardScreen()
-//                NavigationBuild(controller,allWorkViewModel)
-
-                BottomNav(allWorkViewModel, OrderViewModel)
+                BottomNavBar(allWorkViewModel, OrderViewModel)
             }
         }
     }
@@ -57,70 +60,3 @@ fun DefaultPreview() {
     }
 }
 
-
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@Composable
-fun BottomNav(myViewmodel: AllWorkViewModel,ordersViewModel: OrdersViewModel) {
-
-    val controller = rememberNavController()
-    val navBackStackEntry by controller.currentBackStackEntryAsState()
-
-    val currentRoute = navBackStackEntry?.destination?.route
-
-
-    val screens = listOf(
-        Screens.BottomNavScreens.Service,
-        Screens.BottomNavScreens.Orders,
-        Screens.BottomNavScreens.Account,
-        Screens.BottomNavScreens.More
-    )
-
-    Scaffold(
-
-
-        bottomBar = {
-            if (currentRoute == Screens.BOTTOM_NAV_GRAPH.route || currentRoute == Screens.BottomNavScreens.Service.route
-                || currentRoute == Screens.BottomNavScreens.More.route || currentRoute == Screens.BottomNavScreens.Account.route || currentRoute == Screens.BottomNavScreens.Orders.route
-            ) {
-                BottomNavigation(
-                    backgroundColor = Color(0xFF6FC8FB),
-                    modifier = Modifier.height(80.dp),
-
-
-                    ) {
-
-                    screens.forEach { item ->
-                        BottomNavigationItem(
-                            modifier = Modifier.align(Alignment.CenterVertically),
-                            selected = currentRoute == item.route,
-                            unselectedContentColor = Color.LightGray,
-                            selectedContentColor = Color.White,
-
-                            onClick = {
-                                controller.navigate(item.route)
-                            },
-                            label = { Text(text = item.lable) },
-                            icon = {
-
-                                Icon(
-                                    modifier = Modifier.padding(7.dp),
-                                    painter = (painterResource(id = item.icon)),
-                                    contentDescription = null
-                                )
-                            })
-                    }
-
-                }
-
-            }
-        },
-
-        )
-    {
-
-        NavigationBuild(controller, myViewmodel,ordersViewModel)
-//        NavigationBuild(controller)
-
-    }
-
-}

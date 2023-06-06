@@ -1,6 +1,7 @@
 package com.example.workgraduateproject.view
 
 import android.annotation.SuppressLint
+import android.preference.PreferenceManager
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -42,15 +44,22 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun OrdersScreen(allWorkViewModel: AllWorkViewModel,viewModel: OrdersViewModel) {
+fun OrdersScreen(viewModel: OrdersViewModel) {
 
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
     val myTabs = listOf("Pending", "Underway", "Completed")
 
-    viewModel.getCompleteOrderList()
-    viewModel.getUnCompleteOrderList()
-    viewModel.getPendingOrderList()
+    val context = LocalContext.current
+    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    val token = sharedPreferences.getString("token", "")
+
+    if (token!=null&& token.isNotEmpty()){
+        viewModel.getCompleteOrderList(token.toString())
+        viewModel.getUnCompleteOrderList(token.toString())
+        viewModel.getPendingOrderList(token.toString())
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -152,71 +161,17 @@ fun OrdersScreen(allWorkViewModel: AllWorkViewModel,viewModel: OrdersViewModel) 
                         0 -> {
 
 
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(top = 3.dp, bottom = 83.dp),
-
-                                    ) {
-                                    items(viewModel.pendingOrderListResponse) {
-                                        MyOrederItem(it)
-                                    }
-                                }
-
-
-                            }
+                            pendingOrderScreen(viewModel)
 
 
                         }
                         1 -> {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(top = 3.dp, bottom = 83.dp),
-
-                                    ) {
-                                    items(viewModel.unCompleteOrderListResponse) {
-                                        MyOrederItem(it)
-                                    }
-                                }
-
-
-                            }
+                            unCompletedOrderScreen(viewModel)
 
 
                         }
                         2 -> {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(top = 3.dp, bottom = 83.dp),
-
-                                    ) {
-                                    items(viewModel.completeOrderListResponse) {
-                                        MyOrederItem(it)
-                                    }
-                                }
-
-
-                            }
+                            completedOrderScreen(viewModel)
 
                         }
                     }
@@ -230,6 +185,94 @@ fun OrdersScreen(allWorkViewModel: AllWorkViewModel,viewModel: OrdersViewModel) 
     )
 
 
+}
+
+@Composable
+private fun completedOrderScreen(viewModel: OrdersViewModel) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        if (viewModel.completeOrderListResponse.isEmpty()) {
+            Text(text = "There Is No Completed Orders")
+
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 3.dp, bottom = 83.dp),
+
+                ) {
+                items(viewModel.completeOrderListResponse) {
+                    MyOrederItem(it)
+                }
+            }
+
+        }
+
+
+    }
+}
+
+@Composable
+private fun unCompletedOrderScreen(viewModel: OrdersViewModel) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        if (viewModel.unCompleteOrderListResponse.isEmpty()) {
+            Text(text = "There Is No UnComplete Orders")
+
+        } else {
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 3.dp, bottom = 83.dp),
+
+                ) {
+                items(viewModel.unCompleteOrderListResponse) {
+                    MyOrederItem(it)
+                }
+            }
+
+        }
+
+
+    }
+}
+
+@Composable
+private fun pendingOrderScreen(viewModel: OrdersViewModel) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        if (viewModel.pendingOrderListResponse.isEmpty()) {
+
+            Text(text = "There Is No Pending Orders")
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 3.dp, bottom = 83.dp),
+
+                ) {
+                items(viewModel.pendingOrderListResponse) {
+                    MyOrederItem(it)
+                }
+            }
+
+        }
+
+
+    }
 }
 
 
@@ -262,7 +305,7 @@ fun MyOrederItem(myData: Data) {
                 Text(
                     modifier = Modifier
                         .padding(top = 5.dp),
-                    text = "Order #52001",
+                    text = "Order #${myData.id}",
                     color = Color(0xff272727),
                     fontSize = 15.sp,
                     textAlign = TextAlign.Center
@@ -282,7 +325,8 @@ fun MyOrederItem(myData: Data) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 15.dp, end = 15.dp)
+                    .padding(start = 15.dp, end = 15.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     modifier = Modifier

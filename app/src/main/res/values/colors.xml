@@ -7,4 +7,22 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+
+    <color name="blue">#ff346EDF</color>
+    <color name="lightBlue">#ff6FC8FB</color>
+    <color name="darkBlue">#ff0E4DFB</color>
+    <color name="unselectedContentColor">#ff646781</color>
+    <color name="textFieldBackgroundColor">#ffF2F6F6</color>
+    <color name="focusedBorderColor">#ff0E4DFB</color>
+    <color name="unfocusedBorderColor">#ffF0F0F0</color>
+    <color name="unfocusedColor">#ffC2CECE</color>
+    <color name="unfocusedCountryColor">#ffF2F6F6</color>
+    <color name="btnElevationColor">#ffE9C75E</color>
+
+
+
+
+
+
 </resources>

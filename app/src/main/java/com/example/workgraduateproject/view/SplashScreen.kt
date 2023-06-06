@@ -1,5 +1,7 @@
 package com.example.workgraduateproject.view
 
+import android.content.Context
+import android.preference.PreferenceManager
 import android.view.animation.BounceInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.animateFloatAsState
@@ -17,6 +19,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -31,8 +35,7 @@ fun SplashScreen(navController: NavController) {
         androidx.compose.animation.core.Animatable(0f)
     }
 
-
-    // AnimationEffect
+    val context = LocalContext.current
 
     var startAnimation by remember { mutableStateOf(false) }
     val alphaAnimation = animateFloatAsState(
@@ -46,7 +49,24 @@ fun SplashScreen(navController: NavController) {
         startAnimation = true
         delay(4000)
         navController.popBackStack()
-        navController.navigate(Screens.AuthScreens.OnBoarding.route)
+
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val token = sharedPreferences.getString("token", null)
+        val onBoarding = sharedPreferences.getBoolean("onBoardingDone", false)
+
+        if (onBoarding) {
+            if (token == null) {
+                navController.navigate(Screens.AuthScreens.Login.route)
+            } else {
+                navController.navigate(Screens.BottomNavScreens.Service.route)
+            }
+
+        } else {
+
+            navController.navigate(Screens.AuthScreens.OnBoarding.route)
+
+        }
     }
 
 
@@ -58,10 +78,15 @@ fun SplashScreen(navController: NavController) {
             .background(
                 brush = Brush.verticalGradient(
 
-                    colors = listOf(Color(0xff346EDF), Color(0xff346EDF), Color(0xff6FC8FB))
+                    colors = listOf(
+                        colorResource(id = R.color.blue),
+                        colorResource(id = R.color.blue),
+                        colorResource(id = R.color.lightBlue),
+                    )
                 )
             )
     ) {
+
         Image(
             modifier = Modifier
                 .height(350.dp)

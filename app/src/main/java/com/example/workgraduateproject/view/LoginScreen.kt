@@ -1,6 +1,8 @@
 package com.example.workgraduateproject.view
 
 import android.content.Context
+import android.preference.PreferenceManager
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -22,11 +24,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -50,11 +54,11 @@ fun LoginScreen(navController: NavController) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
     val pages = listOf("Customer", "Service provider")
-    val userEmail by rememberSaveable { mutableStateOf("mushtaha98@gmail.com") }
-    val password by rememberSaveable { mutableStateOf("123123") }
+    val userEmail by rememberSaveable { mutableStateOf("") }
+    val password by rememberSaveable { mutableStateOf("") }
 
 
-    val loginViewModel = viewModel<LoginViewModel>()
+    val viewModel = viewModel<LoginViewModel>()
 
 
 
@@ -65,7 +69,10 @@ fun LoginScreen(navController: NavController) {
             .background(
                 brush = Brush.horizontalGradient(
 
-                    colors = listOf(Color(0xff346EDF), Color(0xff6FC8FB))
+                    colors = listOf(
+                        colorResource(id = R.color.blue),
+                        colorResource(id = R.color.lightBlue)
+                    )
                 )
             )
     ) {
@@ -182,9 +189,9 @@ fun LoginScreen(navController: NavController) {
 
                         CustomerLoginScreen(
                             navController,
-                            loginViewModel,
-                            userEmail,
-                            password,
+                            viewModel,
+//                            userEmail,
+//                            password,
                             LocalContext.current
                         )
 
@@ -413,13 +420,45 @@ private fun CustomerLoginScreen(
 
     navController: NavController,
     loginViewModel: LoginViewModel,
-    userEmail: String,
-    password: String,
+
     context: Context
 
 ) {
-    var customerEmail by remember { mutableStateOf(value = "") }
-    var customerPassword by remember { mutableStateOf(value = "") }
+
+
+    LaunchedEffect(loginViewModel.loginResponse) {
+        loginViewModel.loginResponse.observeForever { loginResponse ->
+
+            Log.d("Response", "My Response ==> ${loginResponse}")
+            Toast
+                .makeText(
+                    context,
+                    " my token ${loginResponse.data?.token}",
+                    Toast.LENGTH_LONG
+                )
+                .show()
+
+
+            if (loginResponse.data?.active == "مفعل") {
+
+                navController.navigate(Screens.BOTTOM_NAV_GRAPH.route)
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                val editor = sharedPreferences.edit()
+                editor.putString("token", "Bearer ${loginResponse.data?.token}")
+                editor.apply()
+            }
+
+        }
+    }
+
+    val customerEmail = remember {
+        mutableStateOf(
+            TextFieldValue(
+                ""
+            )
+        )
+    }
+    val customerPassword = remember { mutableStateOf(TextFieldValue("")) }
     var customerShowPassword by remember { mutableStateOf(value = false) }
     var customerIsChecked by remember { mutableStateOf(value = false) }
 
@@ -439,7 +478,7 @@ private fun CustomerLoginScreen(
                     clip = true
 
                 ),
-            value = customerEmail, onValueChange = { value -> customerEmail = value },
+            value = customerEmail.value, onValueChange = { value -> customerEmail.value = value },
             placeholder = { Text(text = "Email") },
 
             colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -466,7 +505,8 @@ private fun CustomerLoginScreen(
                     shape = RoundedCornerShape(6.dp),
                     clip = true
                 ),
-            value = customerPassword, onValueChange = { value -> customerPassword = value },
+            value = customerPassword.value,
+            onValueChange = { value -> customerPassword.value = value },
             placeholder = { Text(text = "password") },
 
             colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -575,18 +615,14 @@ private fun CustomerLoginScreen(
             Button(
                 onClick = {
 
-                    navController.navigate(Screens.BOTTOM_NAV_GRAPH.route)
+//                    navController.navigate(Screens.BOTTOM_NAV_GRAPH.route)
 
-                    loginViewModel.loginPost("mushtaha98@gmail.com", "123123")
+
+                    loginViewModel.loginPost(
+                        customerEmail.value.text,
+                        customerPassword.value.text
+                    )
 //                    loginViewModel.loginPost(userEmail, password)
-
-                    Toast
-                        .makeText(
-                            context,
-                            " my token ${loginViewModel.loginResponse}",
-                            Toast.LENGTH_LONG
-                        )
-                        .show()
 
 
                 },

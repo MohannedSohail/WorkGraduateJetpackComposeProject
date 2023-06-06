@@ -1,6 +1,7 @@
 package com.example.workgraduateproject.view
 
 import android.content.Context
+import android.preference.PreferenceManager
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +46,7 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.workgraduateproject.R
+import com.example.workgraduateproject.navigation.Screens
 import com.example.workgraduateproject.viewModel.SignUpViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -64,18 +67,16 @@ fun SignUpScreen(navController: NavController) {
 
     val signUpViewModel = viewModel<SignUpViewModel>()
 
-    val customerEmail by remember { mutableStateOf(value = "") }
-    val customerFullName by remember { mutableStateOf(value = "") }
-    val customerPassword by remember { mutableStateOf(value = "") }
-    val customerPhone by remember { mutableStateOf(value = "") }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 brush = Brush.horizontalGradient(
 
-                    colors = listOf(Color(0xff346EDF), Color(0xff6FC8FB))
+                    colors = listOf(
+                        colorResource(id = R.color.blue),
+                        colorResource(id = R.color.lightBlue)
+                    )
                 )
             )
     ) {
@@ -87,7 +88,9 @@ fun SignUpScreen(navController: NavController) {
 //            horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
                 Icon(
                     painter = painterResource(id = R.drawable.back),
                     contentDescription = "",
@@ -122,7 +125,7 @@ fun SignUpScreen(navController: NavController) {
                                     currentTabPosition = tabPositions[pagerState.currentPage],
                                     tabWidth = 30.dp
                                 ),
-                                color = Color(0xff0E4DFB),
+                                color = colorResource(id = R.color.darkBlue),
                                 height = 3.dp,
                             )
                         },
@@ -140,8 +143,8 @@ fun SignUpScreen(navController: NavController) {
                                 modifier = Modifier.zIndex(6f),
                                 text = { Text(text = title) },
                                 selected = pagerState.currentPage == index,
-                                selectedContentColor = Color(0xff0E4DFB),
-                                unselectedContentColor = Color(0xff646781),
+                                selectedContentColor = colorResource(id = R.color.darkBlue),
+                                unselectedContentColor = colorResource(id = R.color.unselectedContentColor),
                                 onClick = {
 
                                     coroutineScope.launch {
@@ -173,10 +176,6 @@ fun SignUpScreen(navController: NavController) {
                         CustomerSignUpScreen(
                             navController,
                             signUpViewModel,
-                            customerFullName,
-                            customerEmail,
-                            customerPassword,
-                            customerPhone,
                             LocalContext.current
                         )
 
@@ -202,18 +201,47 @@ private fun CustomerSignUpScreen(
 
     navController: NavController,
     signUpViewModel: SignUpViewModel,
-    name: String,
-    email: String,
-    password: String,
-    phone: String,
     context: Context
 
 ) {
     var customerEmail by remember { mutableStateOf(value = "") }
     var customerFullName by remember { mutableStateOf(value = "") }
     var customerPassword by remember { mutableStateOf(value = "") }
+
+    val phoneNumber = rememberSaveable { mutableStateOf("") }
+    val fullPhoneNumber = rememberSaveable { mutableStateOf("") }
+    var isNumberValid: Boolean by rememberSaveable { mutableStateOf(false) }
+
     var customerShowPassword by remember { mutableStateOf(value = false) }
     var customerIsChecked by remember { mutableStateOf(value = false) }
+
+    LaunchedEffect(signUpViewModel.signUpResponse) {
+        signUpViewModel.signUpResponse.observeForever { signUpResponse ->
+
+
+            Log.d("Response", "My Response ==> ${signUpResponse}")
+            Toast
+                .makeText(
+                    context,
+                    " my token ${signUpResponse}",
+                    Toast.LENGTH_LONG
+                )
+                .show()
+
+
+            if (signUpResponse.data?.active == "مفعل") {
+
+                navController.navigate(Screens.BOTTOM_NAV_GRAPH.route)
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                val editor = sharedPreferences.edit()
+                editor.putString("token", "Bearer ${signUpResponse.data?.token}")
+                editor.apply()
+
+            }
+
+        }
+    }
+
 
     Column(
         modifier = Modifier
@@ -241,12 +269,12 @@ private fun CustomerSignUpScreen(
             },
 
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                backgroundColor = Color(0xffF2F6F6),
-                focusedBorderColor = Color(0xff0E4DFB),
-                unfocusedBorderColor = Color(0xffF0F0F0),
-                unfocusedLabelColor = Color(0xffC2CECE),
-                disabledPlaceholderColor = Color(0xffC2CECE),
-                trailingIconColor = Color(0xffC2CECE)
+                backgroundColor = colorResource(id = R.color.textFieldBackgroundColor),
+                focusedBorderColor = colorResource(id = R.color.focusedBorderColor),
+                unfocusedBorderColor = colorResource(id = R.color.unfocusedBorderColor),
+                unfocusedLabelColor = colorResource(id = R.color.unfocusedColor),
+                disabledPlaceholderColor = colorResource(id = R.color.unfocusedColor),
+                trailingIconColor = colorResource(id = R.color.unfocusedColor)
             ),
 
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -269,12 +297,12 @@ private fun CustomerSignUpScreen(
             placeholder = { Text(text = "Email") },
 
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                backgroundColor = Color(0xffF2F6F6),
-                focusedBorderColor = Color(0xff0E4DFB),
-                unfocusedBorderColor = Color(0xffF0F0F0),
-                unfocusedLabelColor = Color(0xffC2CECE),
-                disabledPlaceholderColor = Color(0xffC2CECE),
-                trailingIconColor = Color(0xffC2CECE)
+                backgroundColor = colorResource(id = R.color.textFieldBackgroundColor),
+                focusedBorderColor = colorResource(id = R.color.focusedBorderColor),
+                unfocusedBorderColor = colorResource(id = R.color.unfocusedBorderColor),
+                unfocusedLabelColor = colorResource(id = R.color.unfocusedColor),
+                disabledPlaceholderColor = colorResource(id = R.color.unfocusedColor),
+                trailingIconColor = colorResource(id = R.color.unfocusedColor)
             ),
 
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -282,8 +310,25 @@ private fun CustomerSignUpScreen(
 
 
         Spacer(modifier = Modifier.height(10.dp))
-        CountryCode()
+//        CountryCode(customerPhone)
 
+
+        TogiCountryCodePicker(
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = colorResource(id = R.color.darkBlue),
+                cursorColor = Color(0xffAF8344),
+                backgroundColor = colorResource(id = R.color.unfocusedCountryColor),
+            ),
+            shape = RoundedCornerShape(8.dp),
+            showPlaceholder = true,
+            onValueChange = { (code, phone), isValid ->
+                Log.d("CCP", "onValueChange: $code $phone -> $isValid")
+                phoneNumber.value = phone
+                fullPhoneNumber.value = code + phone
+                isNumberValid = isValid
+            },
+
+            )
 
         Spacer(modifier = Modifier.height(5.dp))
 
@@ -303,12 +348,12 @@ private fun CustomerSignUpScreen(
             placeholder = { Text(text = "password") },
 
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                backgroundColor = Color(0xffF2F6F6),
-                focusedBorderColor = Color(0xff0E4DFB),
-                unfocusedBorderColor = Color(0xffF0F0F0),
-                unfocusedLabelColor = Color(0xffC2CECE),
-                disabledPlaceholderColor = Color(0xffC2CECE),
-                trailingIconColor = Color(0xffC2CECE)
+                backgroundColor = colorResource(id = R.color.textFieldBackgroundColor),
+                focusedBorderColor = colorResource(id = R.color.focusedBorderColor),
+                unfocusedBorderColor = colorResource(id = R.color.unfocusedBorderColor),
+                unfocusedLabelColor = colorResource(id = R.color.unfocusedColor),
+                disabledPlaceholderColor = colorResource(id = R.color.unfocusedColor),
+                trailingIconColor = colorResource(id = R.color.unfocusedColor)
             ),
             trailingIcon = {
                 if (customerShowPassword) {
@@ -356,7 +401,7 @@ private fun CustomerSignUpScreen(
                 Text(
                     text = "Home Service Terms&Conditions",
                     style = TextStyle(fontSize = 12.sp),
-                    color = Color(0xff0E4DFB)
+                    color = colorResource(id = R.color.darkBlue)
                 )
 
             }
@@ -394,7 +439,7 @@ private fun CustomerSignUpScreen(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         ),
-                        color = Color(0xff0E4DFB)
+                        color = colorResource(id = R.color.darkBlue)
                     )
 
                 }
@@ -404,14 +449,12 @@ private fun CustomerSignUpScreen(
             Button(
                 onClick = {
 
-                          signUpViewModel.signUpPost("TheKing","mushtaha19118@gmail.com","123123","0594042996")
-                    Toast
-                        .makeText(
-                            context,
-                            " My SignUp token ==> ${signUpViewModel.signUpResponse}",
-                            Toast.LENGTH_LONG
-                        )
-                        .show()
+                    signUpViewModel.signUpPost(
+                        customerFullName,
+                        customerEmail,
+                        customerPassword,
+                        phoneNumber.value
+                    )
 
                 },
                 modifier = Modifier
@@ -419,17 +462,17 @@ private fun CustomerSignUpScreen(
                     .weight(1f)
                     .shadow(
                         elevation = 10.dp,
-                        ambientColor = Color(0xffE9C75E),
-                        spotColor = Color(0xffE9C75E),
+                        ambientColor = colorResource(id = R.color.btnElevationColor),
+                        spotColor = colorResource(id = R.color.btnElevationColor),
                         shape = RoundedCornerShape(5.dp)
                     )
                     .background(
                         brush = Brush.horizontalGradient(
 
                             colors = listOf(
-                                Color(0xff346EDF),
-                                Color(0xff346EDF),
-                                Color(0xff6FC8FB)
+                                colorResource(id = R.color.blue),
+                                colorResource(id = R.color.blue),
+                                colorResource(id = R.color.lightBlue)
                             )
                         )
                     ),
@@ -467,6 +510,7 @@ private fun ServiceProviderSignUpScreen(
     var serviceproviderFullName by remember { mutableStateOf(value = "") }
     var serviceproviderEmail by remember { mutableStateOf(value = "") }
     var serviceproviderPassword by remember { mutableStateOf(value = "") }
+    var serviceproviderPhone by remember { mutableStateOf(value = "") }
     var serviceproviderShowPassword by remember { mutableStateOf(value = false) }
     var serviceproviderIsChecked by remember { mutableStateOf(value = false) }
 
@@ -546,7 +590,7 @@ private fun ServiceProviderSignUpScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        CountryCode()
+        CountryCode(serviceproviderPhone)
 
         Spacer(modifier = Modifier.height(5.dp))
 
@@ -829,13 +873,14 @@ private fun CircleCheckbox(selected: Boolean, enabled: Boolean = true, onChecked
 }
 
 @Composable
-private fun CountryCode() {
+private fun CountryCode(fullNumber: String) {
 
 
     val phoneNumber = rememberSaveable { mutableStateOf("") }
     val fullPhoneNumber = rememberSaveable { mutableStateOf("") }
     var isNumberValid: Boolean by rememberSaveable { mutableStateOf(false) }
 
+    fullPhoneNumber.value = fullNumber
 
     TogiCountryCodePicker(
         colors = TextFieldDefaults.outlinedTextFieldColors(

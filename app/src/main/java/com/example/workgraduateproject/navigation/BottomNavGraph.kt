@@ -21,7 +21,7 @@ fun NavGraphBuilder.bottomNavGraph(navController: NavController, myViewModel: Al
             ServiceScreen(navController, myViewModel)
         }
         composable(Screens.BottomNavScreens.Orders.route) {
-            OrdersScreen(myViewModel,viewModel)
+            OrdersScreen(viewModel)
         }
         composable(Screens.BottomNavScreens.Account.route) {
             ProfileScreen()

@@ -1,5 +1,6 @@
 package com.example.workgraduateproject.view
 
+import android.preference.PreferenceManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,6 +14,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,7 +34,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun OnBordingScreens(navController: NavController) {
-
+val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -91,6 +93,10 @@ fun OnBordingScreens(navController: NavController) {
                     } else if (pagerState.currentPage == 2) {
 
                         navController.navigate(Screens.AuthScreens.Login.route)
+                        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                        val editor = sharedPreferences.edit()
+                        editor.putBoolean("onBoardingDone",true )
+                        editor.apply()
                     }
 
                 }
@@ -132,7 +138,7 @@ fun OnBordingItems() = listOf(
                 "and craftsmen"
     ),
     OnBordingContentData(
-        R.drawable.onbording, "Fast reservation with technicians \n" +
+        R.drawable.onbordingmobile, "Fast reservation with technicians \n" +
                 "and craftsmen"
     ), OnBordingContentData(
         R.drawable.mobileapplicationcall, "Fast reservation with technicians \n" +

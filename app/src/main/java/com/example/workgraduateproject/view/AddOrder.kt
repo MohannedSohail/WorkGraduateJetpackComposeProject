@@ -2,6 +2,7 @@ package com.example.workgraduateproject.view
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,7 +13,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
@@ -22,7 +22,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -40,29 +39,57 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
 import com.example.workgraduateproject.R
+import com.example.workgraduateproject.FileHelper
 import com.example.workgraduateproject.navigation.Screens
+import com.google.gson.Gson
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun AddOrder(navController: NavController, id: Int) {
 
+
+    var imgDetails by remember { mutableStateOf(value = "") }
+
     var selectedMultiImages by remember {
         mutableStateOf<List<Uri>>(emptyList())
     }
+    val context = LocalContext.current
+//
+//    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+//    val token = sharedPreferences.getString("token", "")
+
 
     val multiplePhotosPickerLuncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
             selectedMultiImages = it
         }
 
+//    Toast
+//        .makeText(
+//            LocalContext.current,
+//            " Work ID ${id}",
+//            Toast.LENGTH_LONG
+//        )
+//        .show()
 
-    Toast
-        .makeText(
-            LocalContext.current,
-            " Work ID ${id}",
-            Toast.LENGTH_LONG
-        )
-        .show()
+
+//    Toast
+//        .makeText(
+//            LocalContext.current,
+//            " UserToken ${token}",
+//            Toast.LENGTH_LONG
+//        )
+//        .show()
+
+
+//    Toast
+//        .makeText(
+//            LocalContext.current,
+//            " My Selected Images ${selectedMultiImages}",
+//            Toast.LENGTH_LONG
+//        )
+//        .show()
+
 
     Scaffold(
 
@@ -96,7 +123,7 @@ fun AddOrder(navController: NavController, id: Int) {
 
 
                         IconButton(modifier = Modifier,
-                            onClick = {/* Do Something*/ }, content = {
+                            onClick = {navController.popBackStack() }, content = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.back),
                                     null,
@@ -134,11 +161,13 @@ fun AddOrder(navController: NavController, id: Int) {
                             modifier = Modifier.then(
                                 if (selectedMultiImages.isNotEmpty()) Modifier
                                     .fillMaxWidth()
-                                    .height(150.dp)
+                                    .height(180.dp)
                                     .padding(start = 8.dp, end = 8.dp)
                                     .clickable(enabled = false, onClick = {
 
                                         multiplePhotosPickerLuncher.launch("image/*")
+
+
                                     }) else Modifier
                                     .fillMaxWidth()
                                     .height(50.dp)
@@ -185,7 +214,7 @@ fun AddOrder(navController: NavController, id: Int) {
                                                     SubcomposeAsyncImageContent()
                                                 }
                                             }
-                                                                                    }
+                                        }
                                     })
 
                             } else {
@@ -210,7 +239,7 @@ fun AddOrder(navController: NavController, id: Int) {
                             Modifier.then(
                                 if (selectedMultiImages.isNotEmpty()) Modifier
                                     .fillMaxWidth()
-                                    .height(150.dp) else Modifier
+                                    .height(180.dp) else Modifier
                                     .fillMaxWidth()
                                     .height(50.dp)
                             )
@@ -258,7 +287,7 @@ fun AddOrder(navController: NavController, id: Int) {
                         focusedBorderColor = Color(0xff0E4DFB),
 
                         ),
-                    value = "", onValueChange = {},
+                    value = imgDetails, onValueChange = { value -> imgDetails = value },
                 )
 
 
@@ -270,7 +299,30 @@ fun AddOrder(navController: NavController, id: Int) {
             Button(
                 onClick = {
 
-                    navController.navigate(Screens.AddOrderScreen.AddLocation.route)
+//                    val details = "Test"
+                    val imgPath = FileHelper.mapUrisToPaths(selectedMultiImages)
+                    val imagesJson =
+                        Gson().toJson(imgPath.toTypedArray(), Array<String>::class.java)
+
+                    if (imgDetails.isNotEmpty()){
+
+                        navController.navigate(
+                            Screens.AddOrderScreen.AddLocation.route + "/${id}" + "/${imgDetails}" + "/${
+                                Uri.encode(
+                                    imagesJson
+                                )
+                            }"
+                        )
+                        Log.d("selectedMultiImages", selectedMultiImages.toString())
+                    }else{
+                        Toast.makeText(
+                            context,
+                            "Please Add Information About Your Problem!",
+                            Toast.LENGTH_LONG
+                        )
+                            .show()
+                    }
+
                 },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -307,3 +359,16 @@ fun AddOrder(navController: NavController, id: Int) {
 
     }
 }
+
+//private fun convertUriToFile(context: Context, uri: Uri): File? {
+//    val inputStream = context.contentResolver.openInputStream(uri)
+//    val fileName = "image_${System.currentTimeMillis()}"
+//    val file = File(context.cacheDir, fileName)
+//    inputStream?.use { input ->
+//        file.outputStream().use { output ->
+//            input.copyTo(output)
+//        }
+//        return file
+//    }
+//    return null
+//}

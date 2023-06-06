@@ -13,45 +13,46 @@ import kotlinx.coroutines.launch
 
 class OrdersViewModel : ViewModel() {
 
-    var completeOrderListResponse:List<Data> by mutableStateOf(listOf())
-    var unCompleteOrderListResponse:List<Data> by mutableStateOf(listOf())
-    var pendingOrderListResponse:List<Data> by mutableStateOf(listOf())
+    var completeOrderListResponse: List<Data> by mutableStateOf(listOf())
+    var unCompleteOrderListResponse: List<Data> by mutableStateOf(listOf())
+    var pendingOrderListResponse: List<Data> by mutableStateOf(listOf())
 
-    fun getUnCompleteOrderList() {
+    fun getUnCompleteOrderList(
+        token: String,
+    ) {
         viewModelScope.launch {
-            val apiService =  ApiService.getInstance()
-            val itemList = apiService.getUnCompleteOrder()
+            val apiService = ApiService.getInstance()
+            val itemList = apiService.getUnCompleteOrder(token)
             unCompleteOrderListResponse = itemList.data
 
 
-
         }
     }
 
-    fun getCompleteOrderList() {
+    fun getCompleteOrderList(
+        token: String,
+    ) {
         viewModelScope.launch {
-            val apiService =  ApiService.getInstance()
-            val itemList = apiService.getCompleteOrder()
+            val apiService = ApiService.getInstance()
+            val itemList = apiService.getCompleteOrder(token)
             completeOrderListResponse = itemList.data
 
 
-
         }
     }
 
 
-    fun getPendingOrderList() {
+    fun getPendingOrderList(
+        token: String,
+    ) {
         viewModelScope.launch {
-            val apiService =  ApiService.getInstance()
-            val itemList = apiService.getPendingOrder()
+            val apiService = ApiService.getInstance()
+            val itemList = apiService.getPendingOrder(token)
             pendingOrderListResponse = itemList.data
 
 
-
         }
     }
-
-
 
 
 }
